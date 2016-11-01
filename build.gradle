@@ -12,9 +12,31 @@ buildscript {
     }
 }
 
+def dlPath = '/sdcard/DynamicLoadHost'
+
 allprojects {
     repositories {
         jcenter()
+    }
+    task upload (dependsOn:':plugin_test:assembleDebug') <<  {
+        try {
+            exec {
+                commandLine android.adbExe, 'shell', 'mkdir', dlPath
+            }
+        }
+        catch (ignored) {
+        }
+
+        exec {
+            commandLine android.adbExe, 'push', project.name + '-debug.apk', dlPath
+            workingDir project.projectDir.toString() + '/build/outputs/apk/'
+        }
+
+    }
+
+
+    task buildLib(type: Jar, dependsOn: 'compileReleaseJavaWithJavac') {
+        from(project.buildDir.toString() + '/intermediates/classes/release')
     }
 }
 
