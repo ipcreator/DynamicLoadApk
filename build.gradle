@@ -5,35 +5,17 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.0'
+        classpath 'com.android.tools.build:gradle:2.2.2'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
 }
 
-def dlPath = '/sdcard/DynamicLoadHost'
-
 allprojects {
     repositories {
         jcenter()
     }
-    task upload (dependsOn:':plugin_test:assembleDebug') <<  {
-        try {
-            exec {
-                commandLine android.adbExe, 'shell', 'mkdir', dlPath
-            }
-        }
-        catch (ignored) {
-        }
-
-        exec {
-            commandLine android.adbExe, 'push', project.name + '-debug.apk', dlPath
-            workingDir project.projectDir.toString() + '/build/outputs/apk/'
-        }
-
-    }
-
 
     task buildLib(type: Jar, dependsOn: 'compileReleaseJavaWithJavac') {
         from(project.buildDir.toString() + '/intermediates/classes/release')

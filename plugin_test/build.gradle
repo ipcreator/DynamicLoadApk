@@ -27,6 +27,24 @@ dependencies {
     provided fileTree(dir: 'libs', include: ['*.jar'])
 }
 
+def dlPath = '/sdcard/DynamicLoadHost'
+
+task upload (dependsOn:':plugin_test:assembleDebug') <<  {
+    try {
+        exec {
+            commandLine android.adbExe, 'shell', 'mkdir', dlPath
+        }
+    }
+    catch (ignored) {
+    }
+
+    exec {
+        commandLine android.adbExe, 'push', project.name + '-debug.apk', dlPath
+        workingDir project.projectDir.toString() + '/build/outputs/apk/'
+    }
+
+}
+
 task beforeBuild(dependsOn: ':lib:buildLib') << {
 
 }
